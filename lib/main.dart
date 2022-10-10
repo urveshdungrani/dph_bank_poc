@@ -4,6 +4,7 @@ import 'package:dataphion_bank/constants/variables.dart';
 import 'package:dataphion_bank/screens/account_details.dart';
 import 'package:dataphion_bank/screens/accounts.dart';
 import 'package:dataphion_bank/screens/dashboard.dart';
+import 'package:dataphion_bank/screens/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
         dashboardRoute: (context) => const Dashboard(),
         accountdetailRoute: (context) => const AccountDetails(),
         accountRoute: (context) => const Accounts(),
+        signinRoute: (context) =>  const SignIn(),
       },
     );
   }

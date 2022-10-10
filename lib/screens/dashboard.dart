@@ -1,15 +1,11 @@
-
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dataphion_bank/constants/colors.dart';
 import 'package:dataphion_bank/constants/navigation.dart';
+import 'package:dataphion_bank/constants/provider.dart';
 import 'package:dataphion_bank/constants/variables.dart';
 import 'package:dataphion_bank/widgets/option_bottom_sheet.dart';
-import 'package:dataphion_bank/widgets/transaction_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 
 class Dashboard extends StatefulWidget {
@@ -21,8 +17,17 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
 int _selectedIndex = 0;
+
+String getInitials(String name) => name.isNotEmpty
+    ? name.trim().split(RegExp(' +')).map((s) => s[0]).take(2).join()
+    : '';
+
   @override
   Widget build(BuildContext context) {
+    var appProvider = Provider.of<AppProvider>(context, listen: true);
+    var clientName = appProvider.transactionData!.clientName;
+    var transactionData = appProvider.transactionData!.transactions;
+    var balanceSummary = appProvider.transactionData!.summary;
     return Scaffold(
       backgroundColor: AppColors.white,
       resizeToAvoidBottomInset: false,
@@ -38,27 +43,7 @@ int _selectedIndex = 0;
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                      // onTap: () => route(RouteTypes.push, accountdetailRoute),
-                       onTap: () async {
-                        HttpClient client = HttpClient()
-                          ..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-
-                        // final request = await client.postUrl(Uri.parse("https://122.166.179.60:18443/fineract-provider/api/v1/self/authentication?username=ravisr&password=ravisr123&tenantIdentifier=default"));
-                        // request.headers.set(HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
-                        // request.write('{"username":"ravisr","password":"ravisr123"}');
-                          
-                        final request = await client.getUrl(Uri.parse("https://122.166.179.60:18443/fineract-provider/api/v1/self/clients/1?tenantIdentifier=default"));
-                        request.headers.set(HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
-                        // request.headers.set(HttpHeaders.authorizationHeader, "Basic cmF2aXNyOnJhdmlzcjEyMw\u003d\u003d");
-                        request.headers.set(HttpHeaders.authorizationHeader, "Basic bWlmb3M6cGFzc3dvcmQ\u003d");
-
-
-                        final response = await request.close();
-
-                        response.transform(utf8.decoder).listen((contents) {
-                          print(contents);
-                        });
-                      },
+                      onTap: () => route(RouteTypes.push, accountdetailRoute),
                       child: Container(
                         width: 50,
                         height: 50,
@@ -67,9 +52,9 @@ int _selectedIndex = 0;
                           shape: BoxShape.circle,
                           color: AppColors.paleGreen.withOpacity(0.5),
                         ),
-                        child: const Text(
-                          'JD',
-                          style: TextStyle(
+                        child: Text(
+                          getInitials(clientName??''),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                           )
@@ -99,7 +84,7 @@ int _selectedIndex = 0;
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 30),
                   child: Text(
-                    "Hi, John Doe",
+                    "Hi, $clientName",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -134,8 +119,8 @@ int _selectedIndex = 0;
                           )
                         ],
                       ),
-                      const Text(
-                        "87654",
+                      Text(
+                        "${balanceSummary!.currency!.displaySymbol} ${balanceSummary.availableBalance}",
                       )
                   ]),
                 ),
@@ -174,12 +159,55 @@ int _selectedIndex = 0;
                     border: Border.all(color: AppColors.gray85)
                   ),
                   child: Column(
-                    children: const [
-                      TransactionWidget(),
-                      SizedBox(height: 10),
-                      TransactionWidget(),
-                      SizedBox(height: 10),
-                      TransactionWidget(),
+                    children: [
+                      ListView.builder(
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  height: 50,
+                                  width: 50,
+                                  margin: const EdgeInsets.only(
+                                    right: 20,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: const Color.fromARGB(255, 247, 244, 244),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('${transactionData?[index].date?[2]}'),
+                                      Text(DateFormat('MMM').format(DateTime(0, transactionData?[index].date?[1] as int))),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(transactionData?[index].paymentDetailData?.paymentType?.name??''),
+                                    Text("${transactionData?[index].date?[2]}-${transactionData?[index].date?[1]}-${transactionData?[index].date?[0]}"),
+                                  ],
+                                ),
+                                const Spacer(),
+                                Text(
+                                  "${transactionData?[index].currency!.displaySymbol} ${transactionData?[index].amount}",
+                                  style: TextStyle(
+                                    color: transactionData?[index].transactionType!.value == 'Withdrawal'?Colors.red: Colors.green,
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 10)
+                          ],
+                        );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -230,34 +258,7 @@ int _selectedIndex = 0;
                             ],
                           ),
                         ],
-                      ),
-                      const SizedBox(width: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                           width: 50,
-                           height: 50,
-                           alignment: Alignment.center,
-                           decoration: BoxDecoration(
-                             shape: BoxShape.circle,
-                             color: AppColors.paleGreen.withOpacity(0.5),
-                           ),
-                           child: const Text(
-                             'JD',
-                             style: TextStyle(
-                               fontSize: 18,
-                               fontWeight: FontWeight.w700,
-                             )
-                           ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "johndoe"
-                          )
-                        ],
-                      ),
-                    ],
+                      ),                    ],
                   ),
                 ),
               ],

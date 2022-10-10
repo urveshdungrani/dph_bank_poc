@@ -1,8 +1,10 @@
 import 'package:dataphion_bank/constants/colors.dart';
 import 'package:dataphion_bank/constants/navigation.dart';
+import 'package:dataphion_bank/constants/provider.dart';
 import 'package:dataphion_bank/constants/variables.dart';
-import 'package:dataphion_bank/widgets/transaction_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Accounts extends StatelessWidget {
   const Accounts({Key? key}) : super(key: key);
@@ -10,7 +12,10 @@ class Accounts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+  var appProvider = Provider.of<AppProvider>(context, listen: true);
+    var accountNo = appProvider.transactionData!.accountNo;
+    var transactionData = appProvider.transactionData!.transactions;
+    var balanceSummary = appProvider.transactionData!.summary;
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -73,16 +78,16 @@ class Accounts extends StatelessWidget {
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text("SAVINGS ACCOUNT"),
-                          Text("12345678910"),
+                        children: [
+                          const Text("SAVINGS ACCOUNT"),
+                          Text("$accountNo"),
                         ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text("CURRENT BALANCE"),
-                          Text("999999"),
+                        children: [
+                          const Text("CURRENT BALANCE"),
+                          Text("${balanceSummary!.currency!.displaySymbol} ${balanceSummary.availableBalance}"),
                         ],
                       )
                     ],
@@ -123,9 +128,44 @@ class Accounts extends StatelessWidget {
                         height: 20,
                       );
                     },
-                    itemCount: 20,
+                    itemCount: transactionData!.length,
                     itemBuilder: ((context, index) {
-                      return const TransactionWidget();
+                      return Row(
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 50,
+                            margin: const EdgeInsets.only(
+                              right: 20,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color.fromARGB(255, 247, 244, 244),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('${transactionData[index].date?[2]}'),
+                                Text(DateFormat('MMM').format(DateTime(0, transactionData[index].date?[1] as int))),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(transactionData[index].paymentDetailData?.paymentType?.name??''),
+                              Text("${transactionData[index].date?[2]}-${transactionData[index].date?[1]}-${transactionData[index].date?[0]}"),
+                            ],
+                          ),
+                          const Spacer(),
+                          Text(
+                            "${transactionData[index].currency!.displaySymbol} ${transactionData[index].amount}",
+                            style: TextStyle(
+                              color: transactionData[index].transactionType!.value == 'Withdrawal'?Colors.red: Colors.green,
+                            ),
+                          )
+                        ],
+                      );
                     }),
                   ),
                 ),

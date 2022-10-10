@@ -1,8 +1,11 @@
 
 import 'package:dataphion_bank/constants/colors.dart';
+import 'package:dataphion_bank/constants/provider.dart';
 import 'package:dataphion_bank/widgets/bg_button.dart';
 import 'package:dataphion_bank/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 
 class AccountDetails extends StatefulWidget {
   const AccountDetails({Key? key}) : super(key: key);
@@ -15,6 +18,9 @@ class AccountDetails extends StatefulWidget {
 class _AccountDetailsState extends State<AccountDetails> {
   @override
   Widget build(BuildContext context) {
+    var appProvider = Provider.of<AppProvider>(context, listen: true);
+    var clientData = appProvider.clientData;
+    var accountType = appProvider.transactionData!.savingsProductName;
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: CustomAppBar(
@@ -76,36 +82,36 @@ class _AccountDetailsState extends State<AccountDetails> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("NICK NAME:"),
-                      Text("JOHN")
+                    children: [
+                      const Text("NICK NAME:"),
+                      Text("${clientData!.firstname}")
                     ],
                   ),
                   const SizedBox(height : 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("ACCOUNT NUMBER:"),
-                      Text("1234567890")
+                    children: [
+                      const  Text("ACCOUNT NUMBER:"),
+                      Text("${clientData.accountNo}")
                     ],
                   ),
                   const SizedBox(height : 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("ACCOUNT TYPE:"),
-                      Text("SAVING")
+                    children: [
+                      const Text("ACCOUNT TYPE:"),
+                      Text("$accountType")
                     ],
                   ),
                   const SizedBox(height : 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("CATEGORY CODE:"),
-                      Text("SALBR")
+                    children: [
+                      const Text("BRANCH:"),
+                      Text("${clientData.officeName}")
                     ],
                   ),
                   const SizedBox(height : 10),
@@ -114,25 +120,25 @@ class _AccountDetailsState extends State<AccountDetails> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
                       Text("IFSC CODE:"),
-                      Text("12341067890")
+                      Text("DPH00CARDS")
                     ],
                   ),
                   const SizedBox(height : 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("OPEN DATE:"),
-                      Text("07/10/2020")
+                    children: [
+                      const Text("OPEN DATE:"),
+                      Text("${clientData.activationDate![2]}-${clientData.activationDate![1]}-${clientData.activationDate![0]}")
                     ],
                   ),
                   const SizedBox(height : 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("STATUS:"),
-                      Text("ACtive")
+                    children: [
+                      const Text("STATUS:"),
+                      Text("${clientData.status!.value}")
                     ],
                   ),
                 ],
@@ -159,18 +165,18 @@ class _AccountDetailsState extends State<AccountDetails> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("ACCOUNT HOLDER:"),
-                      Text("JOHN DOE")
+                    children: [
+                      const Text("ACCOUNT HOLDER:"),
+                      Text("${clientData.displayName}")
                     ],
                   ),
                   const SizedBox(height : 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("CUSTOMER ID:"),
-                      Text("1234567890")
+                    children: [
+                      const Text("MOBILE NO:"),
+                      Text("${clientData.mobileNo}")
                     ],
                   ),
                   const SizedBox(height : 10),
