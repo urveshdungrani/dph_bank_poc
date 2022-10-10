@@ -38,21 +38,27 @@ int _selectedIndex = 0;
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                      onTap: ()async{
+                      // onTap: () => route(RouteTypes.push, accountdetailRoute),
+                       onTap: () async {
                         HttpClient client = HttpClient()
                           ..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
 
-                        // final request = await client.getUrl(Uri.parse("https://122.166.179.60:18443/fineract-provider/actuator/health"));
-                        final request = await client.postUrl(Uri.parse("https://122.166.179.60:18443/api/v1/authentication?username=ravisr&password=ravisr123"));
+                        // final request = await client.postUrl(Uri.parse("https://122.166.179.60:18443/fineract-provider/api/v1/self/authentication?username=ravisr&password=ravisr123&tenantIdentifier=default"));
+                        // request.headers.set(HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
+                        // request.write('{"username":"ravisr","password":"ravisr123"}');
+                          
+                        final request = await client.getUrl(Uri.parse("https://122.166.179.60:18443/fineract-provider/api/v1/self/clients/1?tenantIdentifier=default"));
                         request.headers.set(HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
-                        // request.write('{ "officeId": 1, "firstname": "Petra", "lastname": "Yton", "externalId": "786YYH7", "dateFormat": "dd MMMM yyyy", "locale": "en", "active": true, "activationDate": "04 March 2009", "submittedOnDate":"04 March 2009", "savingsProductId" : 4, "datatables": [{ "registeredTableName": "Family Details", "data": { "locale": "en", "Number of members": "5", "Number of dependents": "3", "No of Children": "2", "Date of verification": "14 December 2016", "dateFormat": "dd MMMM yyyy" } }, { "registeredTableName": "Residency Address", "data": { "locale": "en", "Address Line": "Basavana Gudi Road", "Street": "Gandhi Bazaar", "Landmark": "Aashrama", "COUNTRY_cd_Country": 17, "STATE_cd_State": "7", "DISTRICT_cd_District": "13", "Pincode": "560040" } }] }');
+                        // request.headers.set(HttpHeaders.authorizationHeader, "Basic cmF2aXNyOnJhdmlzcjEyMw\u003d\u003d");
+                        request.headers.set(HttpHeaders.authorizationHeader, "Basic bWlmb3M6cGFzc3dvcmQ\u003d");
+
+
                         final response = await request.close();
 
                         response.transform(utf8.decoder).listen((contents) {
                           print(contents);
                         });
                       },
-                      // onTap: () => route(RouteTypes.push, accountdetailRoute),
                       child: Container(
                         width: 50,
                         height: 50,

@@ -18,22 +18,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Dataphion Bank',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        navigatorKey: navigatorKey,
-        initialRoute: '/',
-        routes: {
-          dashboardRoute: (context) => const Dashboard(),
-          accountdetailRoute: (context) => const AccountDetails(),
-          accountRoute: (context) => const Accounts(),
-
-        });
+      title: 'DPH Bank',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      navigatorKey: navigatorKey,
+      initialRoute: '/',
+      routes: {
+        dashboardRoute: (context) => const Dashboard(),
+        accountdetailRoute: (context) => const AccountDetails(),
+        accountRoute: (context) => const Accounts(),
+      },
+    );
   }
 }
 
